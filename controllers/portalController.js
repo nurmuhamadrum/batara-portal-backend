@@ -6,19 +6,21 @@ const Files = models.file;
 const News = models.news;
 const Share = models.share;
 
+// Fungsi Post Untuk Admin dan Narator untuk membuat berita.
 exports.postContent = (req, res) => {
   if (req.role == 1 || req.role == 2) {
     if (req.userId != req.params.userId) {
       res.status(403).json({ messege: "Forbidden Access" });
     } else {
       News.create({
+        // Fungsi membuat berita dengan mengisi title dan content
         title: req.body.title,
         content: req.body.content,
         createdBy: req.params.userId
       })
         .then(status => {
           req.files.map(x => {
-            Files.create({ fileName: x.filename, newsId: status.id });
+            Files.create({ fileName: x.filename, newsId: status.id }); // Fungsi Menyimpan File yang di isi pada content
           });
           res.status(200).json({
             message: "success"
@@ -33,8 +35,10 @@ exports.postContent = (req, res) => {
   }
 };
 
+// Fungsi untuk menampilkan semua berita
 exports.showPost = (req, res) => {
   News.findAll({
+    // Menampilkan semua berita
     include: [
       {
         model: Files,
@@ -55,8 +59,10 @@ exports.showPost = (req, res) => {
     });
 };
 
+// Fungsi untuk menampilkan detail dari berita
 exports.detailPost = (req, res) => {
   News.findOne({
+    // Menampilkan detail berita dari salah satu yang dipilih
     include: [
       {
         model: Files,
@@ -80,8 +86,10 @@ exports.detailPost = (req, res) => {
     });
 };
 
+// Fungsi untuk query share pada tabel share
 exports.storeShare = (req, res) => {
   Share.findOne({
+    // memvalidasi agar satu user tidak share ke banyak platform
     where: {
       userId: req.params.userId,
       portalId: req.body.portal
@@ -97,6 +105,7 @@ exports.storeShare = (req, res) => {
       });
     } else {
       Share.create({
+        //user share
         userId: req.params.userId,
         portalId: req.body.portal,
         newsId: req.body.news
@@ -115,6 +124,7 @@ exports.storeShare = (req, res) => {
   });
 };
 
+// Fungsi untuk melihat berita apa saja yang sudah di share oleh user
 exports.userShare = (req, res) => {
   if (req.role == 1 || req.role == 2) {
     User.findAll({
@@ -153,6 +163,7 @@ exports.userShare = (req, res) => {
   }
 };
 
+// Fungsi untuk melihat berita apa saja yang dikirim ke portal
 exports.portalShare = (req, res) => {
   if (req.role == 1 || req.role == 2) {
     User.findAll({

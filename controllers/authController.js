@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const models = require("../models");
 const User = models.user;
 
+// Fungsi untuk login
 exports.login = (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -31,6 +32,7 @@ exports.login = (req, res) => {
     .catch(error => console.log(error));
 };
 
+// Fungsi untuk register user
 exports.register = (req, res) => {
   const name = req.body.name;
   const email = req.body.email;
