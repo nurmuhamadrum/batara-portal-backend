@@ -4,13 +4,13 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert("portals", [
       {
-        name: "facebook"
-      },
-      {
-        name: "twitter"
+        name: "instagram"
       },
       {
         name: "whatsapp"
+      },
+      {
+        name: "sms"
       }
     ]);
   },

@@ -23,7 +23,7 @@ const portal = require("./controllers/portalController");
 // Middleware
 const { authenticated, autorized } = require("./middleware");
 
-// Destination
+// Destination File
 const Storage = multer.diskStorage({
   destination(req, file, callback) {
     callback(null, "./uploads");
@@ -44,10 +44,15 @@ app.group("/portal/api/", router => {
   });
 
   // Auth API
+
+  // Endpoint untuk user login
   router.post("/login", auth.login);
+  // Endpoint untuk user register
   router.post("/register", authenticated, auth.register);
 
   // Portal API
+
+  // Endpoint untuk user membuat berita
   router.post(
     "/post/:userId/upload",
     authenticated,
@@ -55,21 +60,16 @@ app.group("/portal/api/", router => {
     upload.array("fileData", 4),
     portal.postContent
   );
+  // Endpoint untuk melihat semua berita
   router.get("/post", portal.showPost);
+  // Endpoint untuk melihat detail dari setiap berita
   router.get("/post/:newsId", portal.detailPost);
-  router.get("/shares", authenticated, portal.userShare);
-  router.get("/share/portals", authenticated, portal.portalShare);
+  // Endpoint untuk user dapat share berita ke platform
   router.get("/share/:userId", portal.storeShare);
-});
-
-app.use((err, req, res, next) => {
-  if (err.name === "UnauthorizedError") {
-    res.status(401).json({
-      message: "You're Unauthorized"
-    });
-  } else {
-    next(err);
-  }
+  // Endpoint untuk melihat berita apa saja yang sudah di share ke platform
+  router.get("/share/portals", authenticated, portal.portalShare);
+  // Endpoint untuk melihat apasaja yang telah di share oleh user
+  router.get("/shares", authenticated, portal.userShare);
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}!`));

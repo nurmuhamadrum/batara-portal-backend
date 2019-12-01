@@ -24,8 +24,8 @@ exports.login = (req, res) => {
           token
         });
       } else {
-        res.status(422).json({
-          message: "Bad Request"
+        res.status(403).json({
+          message: "Forbidden Access"
         });
       }
     })
@@ -51,7 +51,7 @@ exports.register = (req, res) => {
           User.create({ email, name, role, password })
             .then(() => {
               res.status(200).json({
-                message: "success"
+                message: "Register Success"
               });
             })
             .catch(err => {

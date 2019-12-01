@@ -8,22 +8,24 @@ const Share = models.share;
 
 // Fungsi Post Untuk Admin dan Narator untuk membuat berita.
 exports.postContent = (req, res) => {
+  // Validasi hanya user dengan role 1 dan 2 yang bisa membuat berita
   if (req.role == 1 || req.role == 2) {
+    // Validasi Endpoint yang dituju sesuai dengan user
     if (req.userId != req.params.userId) {
       res.status(403).json({ messege: "Forbidden Access" });
     } else {
+      // Fungsi membuat berita dengan mengisi title dan content
       News.create({
-        // Fungsi membuat berita dengan mengisi title dan content
         title: req.body.title,
         content: req.body.content,
         createdBy: req.params.userId
       })
         .then(status => {
-          req.files.map(x => {
-            Files.create({ fileName: x.filename, newsId: status.id }); // Fungsi Menyimpan File yang di isi pada content
+          req.files.map(file => {
+            Files.create({ fileName: file.filename, newsId: status.id }); // Fungsi Menyimpan File yang di isi pada content
           });
           res.status(200).json({
-            message: "success"
+            message: "Create News Success"
           });
         })
         .catch(err => {
@@ -104,15 +106,15 @@ exports.storeShare = (req, res) => {
         message: "Invalid Platform"
       });
     } else {
+      // User share ke platform
       Share.create({
-        //user share
         userId: req.params.userId,
         portalId: req.body.portal,
         newsId: req.body.news
       })
         .then(() => {
           res.status(200).json({
-            message: "Success"
+            message: "Share Success"
           });
         })
         .catch(err => {
